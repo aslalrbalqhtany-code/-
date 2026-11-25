@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#076e58" />
+  <title>مواقيت الصلاة والأذكار</title>
+  <link rel="manifest" href="./manifest.json" />
+  <style>
+    :root {
+      --bg: #f1f6f3;
+      --card: #ffffff;
+      --primary: #076e58;
+      --primary-dark: #044c3d;
+      --accent: #c59b27;
+      --text: #16241f;
+      --muted: #5b6e66;
+      --border: #dce7e1;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding: 14px; }
+    .container { max-width: 680px; margin: 0 auto; }
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; padding: 18px; border-radius: 16px; margin-bottom: 14px;
+    }
+    .header h1 { margin: 0 0 6px; font-size: 20px; }
+    .header p { margin: 0; opacity: 0.9; font-size: 13px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px; margin-bottom: 12px;
+    }
+    .card h2 { margin: 0 0 10px; font-size: 16px; color: var(--primary); }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    select, input, button {
+      padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px;
+    }
+    select, input { background: #fff; color: var(--text); flex: 1; min-width: 140px; }
+    button {
+      background: var(--primary); color: #fff; border: none; cursor: pointer; font-weight: 600;
+    }
+    button.secondary { background: #e6f0ec; color: var(--primary-dark); }
+    button.gold { background: var(--accent); color: #fff; }
+    table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    th, td { padding: 9px 8px; border-bottom: 1px solid var(--border); text-align: right; font-size: 14px; }
+    th { color: var(--muted); font-weight: 600; }
+    .status { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .tasbeeh-box { text-align: center; padding: 8px 0; }
+    .tasbeeh-count { font-size: 32px; font-weight: 700; color: var(--primary); margin: 8px 0; }
+    .zikr-item { padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 14px; line-height: 1.7; }
+    .zikr-item:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>مواقيت الصلاة والأذكار</h1>
+      <p id="nextPrayerInfo">جارٍ تجهيز المواقيت والتنبيهات...</p>
+    </div>
+
+    <div class="card">
+      <h2>المدينة والإعدادات</h2>
+      <div class="row">
+        <select id="citySelect">
+          <option value="تعز" selected>تعز</option>
+          <option value="صنعاء">صنعاء</option>
+          <option value="عدن">عدن</option>
+          <option value="إب">إب</option>
+          <option value="الحديدة">الحديدة</option>
+          <option value="حضرموت">حضرموت</option>
+        </select>
+        <label style="font-size:13px; display:flex; align-items:center; gap:5px;">
+          <input type="checkbox" id="azkarToggle" checked style="flex:0; min-width:auto;" />
+          تنبيه الأذكار
+        </label>
+        <button onclick="syncSchedule()">تحديث الجدولة</button>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button class="gold" onclick="testSystemNotification()">اختبار إشعار النظام</button>
+        <button class="secondary" onclick="playAdhanSample('adhan1.m4a')">تجربة أذان 1</button>
+        <button class="secondary" onclick="playAdhanSample('adhan2.m4a')">تجربة أذان 2</button>
+      </div>
+      <div class="status" id="bridgeStatus">جاري التحقق من ربط النظام...</div>
+    </div>
+
+    <div class="card">
+      <h2>مواقيت اليوم</h2>
+      <table>
+        <thead>
+          <tr><th>الصلاة</th><th>الوقت</th></tr>
+        </thead>
+        <tbody id="timesBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>السبحة الإلكترونية</h2>
+      <div class="tasbeeh-box">
+        <div id="tasbeehPhrase" style="font-weight:600;">سبحان الله وبحمده</div>
+        <div class="tasbeeh-count" id="tasbeehCount">0</div>
+        <div class="row" style="justify-content:center;">
+          <button onclick="incTasbeeh()">سبّح (+1)</button>
+          <button class="secondary" onclick="nextPhrase()">تغيير الذكر</button>
+          <button class="secondary" onclick="resetTasbeeh()">تصفير</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>أذكار مختارة</h2>
+      <div class="zikr-item">أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير.</div>
+      <div class="zikr-item">اللهم بك أصبحنا، وبك أمسينا، وبك نحيا، وبك نموت، وإليك النشور.</div>
+      <div class="zikr-item">أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه.</div>
+    </div>
+  </div>
+
+  <script>
+    const CITY_MINUTES = {
+      "تعز":     [295, 368, 715, 910, 1065, 1140],
+      "صنعاء":   [300, 374, 720, 914, 1068, 1143],
+      "عدن":     [292, 364, 712, 908, 1063, 1138],
+      "إب":       [298, 371, 718, 912, 1067, 1142],
+      "الحديدة": [304, 378, 724, 918, 1073, 1148],
+      "حضرموت":  [282, 353, 700, 895, 1050, 1125]
+    };
+    const PRAYER_LABELS = ["الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"];
+    const PHRASES = ["سبحان الله وبحمده", "سبحان الله العظيم", "الحمد لله", "لا إله إلا الله", "الله أكبر"];
+
+    let count = 0;
+    let phraseIdx = 0;
+    let currentAudio = null;
+
+    function fmtMin(totalMin) {
+      const h24 = Math.floor(totalMin / 60) % 24;
+      const m = totalMin % 60;
+      const period = h24 >= 12 ? "م" : "ص";
+      const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+      return `${String(h12).padStart(2, "0")}:${String(m).padStart(2, "0")} ${period}`;
+    }
+
+    function renderTimes() {
+      const city = document.getElementById("citySelect").value;
+      const mins = CITY_MINUTES[city] || CITY_MINUTES["تعز"];
+      const tbody = document.getElementById("timesBody");
+      tbody.innerHTML = "";
+      mins.forEach((m, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${PRAYER_LABELS[idx]}</td><td>${fmtMin(m)}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      const now = new Date();
+      const cur = now.getHours() * 60 + now.getMinutes();
+      const upcoming = mins.findIndex(m => m > cur);
+      if (upcoming >= 0) {
+        document.getElementById("nextPrayerInfo").textContent =
+          `المدينة: ${city} — الصلاة القادمة: ${PRAYER_LABELS[upcoming]} (${fmtMin(mins[upcoming])})`;
+      } else {
+        document.getElementById("nextPrayerInfo").textContent =
+          `المدينة: ${city} — الصلاة القادمة: الفجر غداً (${fmtMin(mins[0])})`;
+      }
+    }
+
+    function syncSchedule() {
+      renderTimes();
+      const city = document.getElementById("citySelect").value;
+      const mins = CITY_MINUTES[city] || CITY_MINUTES["تعز"];
+      const azkarEnabled = document.getElementById("azkarToggle").checked;
+      const morningMin = 360;
+      const eveningMin = 1020;
+
+      if (window.AndroidBridge && typeof window.AndroidBridge.updateScheduleFromWeb === "function") {
+        window.AndroidBridge.updateScheduleFromWeb(
+          city, mins[0], mins[2], mins[3], mins[4], mins[5],
+          morningMin, eveningMin, azkarEnabled
+        );
+        document.getElementById("bridgeStatus").textContent =
+          "تمت مزامنة المواقيت مع مجدول أندرويد بنجاح.";
+      } else {
+        document.getElementById("bridgeStatus").textContent =
+          "يعمل في وضع المتصفح/الويب (ربط AndroidBridge يظهر داخل تطبيق الأندرويد).";
+      }
+
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: "SYNC_SCHEDULE",
+          payload: {
+            enabled: true,
+            cityName: city,
+            times: mins,
+            azkarEnabled,
+            morningTime: morningMin,
+            eveningTime: eveningMin
+          }
+        });
+      }
+    }
+
+    function testSystemNotification() {
+      if (window.AndroidBridge && typeof window.AndroidBridge.sendTestNotificationNow === "function") {
+        window.AndroidBridge.sendTestNotificationNow();
+      } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: "TEST_NOTIFICATION",
+          title: "مواقيت الصلاة والأذكار",
+          body: "إشعار تجريبي من التطبيق"
+        });
+      } else if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("مواقيت الصلاة والأذكار", { body: "إشعار تجريبي" });
+      }
+    }
+
+    function playAdhanSample(fileName) {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+      currentAudio = new Audio(`./audio/${fileName}`);
+      currentAudio.play().catch(() => {
+        document.getElementById("bridgeStatus").textContent =
+          `تعذر تشغيل ./audio/${fileName} — تأكد من رفع الملف الصوتي أولاً.`;
+      });
+    }
+
+    function incTasbeeh() {
+      count += 1;
+      document.getElementById("tasbeehCount").textContent = count;
+    }
+    function nextPhrase() {
+      phraseIdx = (phraseIdx + 1) % PHRASES.length;
+      document.getElementById("tasbeehPhrase").textContent = PHRASES[phraseIdx];
+    }
+    function resetTasbeeh() {
+      count = 0;
+      document.getElementById("tasbeehCount").textContent = count;
+    }
+
+    document.getElementById("citySelect").addEventListener("change", syncSchedule);
+    document.getElementById("azkarToggle").addEventListener("change", syncSchedule);
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
+
+    renderTimes();
+    syncSchedule();
+  </script>
+</body>
+</html>
