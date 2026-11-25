@@ -1,0 +1,13 @@
+طريقة تحويل المشروع إلى ملف APK من الجوال فقط (بدون لابتوب)
+==============================================================
+
+أضفنا لك في هذا المشروع ملف البناء التلقائي (.github/workflows/build_apk.yml) حتى تبني سيرفرات GitHub ملف الـ APK مجاناً من متصفح جوالك:
+
+الخطوات من متصفح جوالك (Chrome):
+1. فك الضغط عن ملف MawaqitAndroidFullProject-v2.zip في مدير الملفات على جوالك.
+2. افتح موقع github.com من متصفح Chrome وسجّل الدخول (أو أنشئ حساباً مجانياً).
+3. أنشئ مستودعاً جديداً (New repository) وليكن اسمه MawaqitApp.
+4. اضغط على uploading an existing file وارفع جميع الملفات والمجلدات الموجودة داخل MawaqitAndroidFullProject-v2 (بما فيها مجلد .github ومجلد app ومجلد gradle وملفات build.gradle.kts و settings.gradle.kts).
+5. اضغط Commit changes.
+6. افتح تبويب Actions في أعلى المستودع؛ ستجد عملية "Build Android APK" تعمل تلقائياً (تستغرق حوالي دقيقتين).
+7. بعد ظهور علامة الصح الخضراء، افتحها وانزل للأسفل عند قسم Artifacts واضغط على MawaqitPrayerApp-APK لتحميل ملف app-debug.apk وتثبيته مباشرة على جوالك!

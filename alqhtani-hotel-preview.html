@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فندق القحطاني</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial;background:#edf1f6;color:#263445}
+header{background:linear-gradient(120deg,#102a43,#174b64);color:white;text-align:center;padding:28px 10px}
+header h1{color:#f5d58a}
+.hero{background:linear-gradient(120deg,#183c52,#387d88);color:white;text-align:center;padding:38px 15px}
+.hero h2{color:#f5d58a}
+.container{max-width:750px;margin:20px auto;padding:12px}
+.card{background:white;padding:20px;border-radius:16px;margin-bottom:20px;box-shadow:0 4px 15px #0001}
+.rooms{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.room{padding:18px 9px;border-radius:13px;color:white;text-align:center}
+.room h3{margin:8px 0}.emoji{font-size:35px}.price{font-size:18px;font-weight:bold;color:#fff1b9}
+.blue{background:linear-gradient(135deg,#2878a5,#16445e)}
+.purple{background:linear-gradient(135deg,#8260ad,#49336f)}
+.gold{background:linear-gradient(135deg,#c79a42,#8b6020)}
+.green{background:linear-gradient(135deg,#368d70,#155a47)}
+.status{display:inline-block;background:#d7f7e3;color:#14733a;border-radius:20px;padding:6px 12px;font-size:12px}
+.booking-card{background:linear-gradient(145deg,#102a43,#245c70);border:3px solid #c99d4c;color:white}
+.booking-title{background:linear-gradient(90deg,#c99d4c,#f3d58b);color:#173c55;text-align:center;padding:16px;border-radius:10px}
+label{display:block;margin:15px 0 7px;color:#f5d58a;font-weight:bold}
+input,select{width:100%;padding:14px;border:2px solid #d2ae67;border-radius:9px;background:white;font-size:16px}
+.phone-row{display:flex;direction:ltr;gap:8px}
+.phone-code{width:105px;background:#e8f1e9;color:#173c55;border:2px solid #d2ae67;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;flex-shrink:0}
+.phone-row input{direction:ltr;text-align:left}
+.total{background:#fff4d9;color:#173c55;padding:16px;border-radius:12px;margin-top:18px}
+.total strong{color:#9b6b1e;font-size:23px}
+button{background:linear-gradient(90deg,#e0b654,#f5d58a);color:#173c55;font-weight:bold;border:0;width:100%;padding:15px;border-radius:10px;font-size:17px;margin-top:18px;cursor:pointer}
+.note{display:none;background:#d8f5e2;color:#176c38;padding:14px;border-radius:10px;margin:12px 0}
+footer{background:#102a43;color:white;text-align:center;padding:25px;line-height:2}
+@media(max-width:420px){.rooms{grid-template-columns:1fr 1fr}.card{padding:14px}}
+</style>
+</head>
+<body>
+<header><h1>🏨 فندق القحطاني</h1><p>الفخامة والراحة في مكان واحد</p></header>
+<div class="hero"><h2>مرحباً بكم في فندق القحطاني</h2><p>احجز غرفتك واستمتع بإقامة مميزة</p></div>
+<div class="container">
+<div class="card">
+<h2>⭐ أنواع الغرف</h2>
+<div class="rooms">
+<div class="room blue"><div class="emoji">🛏️</div><h3>غرفة فردية</h3><p>لشخص واحد</p><div class="price">5,000 ريال</div><span class="status">متاحة</span></div>
+<div class="room purple"><div class="emoji">🛌</div><h3>غرفة مزدوجة</h3><p>لشخصين</p><div class="price">5,000 ريال</div><span class="status">متاحة</span></div>
+<div class="room gold"><div class="emoji">👑</div><h3>الجناح الملكي</h3><p>إقامة فاخرة</p><div class="price">5,000 ريال</div><span class="status">متاح</span></div>
+<div class="room green"><div class="emoji">✨</div><h3>غرفة VIP</h3><p>غرفة مميزة</p><div class="price">5,000 ريال</div><span class="status">متاحة</span></div>
+</div></div>
+<div class="card booking-card">
+<h2 class="booking-title">📝 احجز غرفتك الآن</h2>
+<div id="notice" class="note">هذه معاينة للعرض فقط؛ إرسال الحجز غير مفعّل في هذه النسخة.</div>
+<form id="booking">
+<label>👤 اسم العميل *</label><input name="name" type="text" placeholder="اكتب اسمك الكامل" required maxlength="100">
+<label>📱 رقم الهاتف اليمني *</label>
+<div class="phone-row"><div class="phone-code">🇾🇪 +967</div><input type="tel" name="phone" placeholder="7XXXXXXXX" inputmode="numeric" pattern="[0-9]{9}" minlength="9" maxlength="9" required></div>
+<label>🏨 اختر الغرفة *</label>
+<select name="room" required><option value="">-- اختر نوع الغرفة --</option><option>الغرفة الفردية - 5000 ريال</option><option>الغرفة المزدوجة - 5000 ريال</option><option>الجناح الملكي - 5000 ريال</option><option>غرفة VIP - 5000 ريال</option></select>
+<label>📅 تاريخ الدخول *</label><input id="checkin" type="date" required>
+<label>📅 تاريخ الخروج *</label><input id="checkout" type="date" required>
+<div class="total">عدد الليالي: <b id="nights">0</b><hr>سعر الليلة: 5,000 ريال يمني<p>الإجمالي:</p><strong id="total">0 ريال</strong></div>
+<button type="submit">✓ تأكيد الحجز الآن</button>
+</form></div></div>
+<footer><h2 style="color:#f5d58a">فندق القحطاني 🏨</h2>المطور: بشار القحطاني<br>رقم التواصل: 738543674<br>نتمنى لكم إقامة سعيدة ❤️</footer>
+<script>
+const start=document.getElementById('checkin'),end=document.getElementById('checkout');
+const today=new Date().toISOString().slice(0,10);start.min=today;end.min=today;
+function calculate(){const a=start.value,b=end.value;if(!a||!b){nights.textContent=0;total.textContent='0 ريال';return}
+const n=Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);
+if(n<=0){nights.textContent=0;total.textContent='0 ريال';return}
+nights.textContent=n;total.textContent=(n*5000).toLocaleString('en-US')+' ريال';}
+start.addEventListener('change',()=>{end.min=start.value;calculate()});end.addEventListener('change',calculate);
+document.getElementById('booking').addEventListener('submit',e=>{e.preventDefault();document.getElementById('notice').style.display='block';});
+</script>
+</body></html>

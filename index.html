@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#087b62">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="مواقيت الصلاة">
+<link rel="manifest" href="manifest.json">
+<title>مواقيت الصلاة</title>
+<style>
+:root{--bg:#f2f7f4;--card:#fff;--text:#17372d;--muted:#71847b;--main:#087b62;--main2:#0d9b78;--soft:#e5f3ed;--line:#e1ebe5;--shadow:0 10px 30px #164b3510}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;padding-bottom:84px;transition:.2s}
+body.dark{--bg:#101b17;--card:#1b2a23;--text:#edf7f1;--muted:#a5b8ad;--main:#55cba3;--main2:#168b6d;--soft:#263e32;--line:#30453a;--shadow:0 10px 30px #0003}
+button,select,input{font:inherit}
+button{cursor:pointer;border:0}
+.top{padding:23px 18px 35px;color:#fff;background:radial-gradient(circle at 90% 0,#27b58d 0,transparent 38%),linear-gradient(135deg,#075b49,#0d9875);border-radius:0 0 30px 30px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-size:22px;font-weight:bold}
+.sub{font-size:12px;opacity:.8;margin-top:5px}
+.cityselect{background:#ffffff20;color:#fff;border:1px solid #ffffff55;padding:10px;border-radius:12px;max-width:125px}
+.cityselect option{color:#123}
+.datebox{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+.datebig{font-size:18px;font-weight:bold}
+.datehint{font-size:12px;opacity:.85;margin-top:7px}
+.moon{font-size:38px}
+.hero{margin:-15px 14px 17px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:17px;box-shadow:var(--shadow)}
+.nextlabel{font-size:12px;color:var(--muted)}
+.nextrow{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px}
+.nextname{font-size:23px;font-weight:bold}
+.count{font-size:21px;color:var(--main);font-weight:bold;direction:ltr;white-space:nowrap}
+.muted{color:var(--muted);font-size:12px;line-height:1.7}
+.prayers{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:18px}
+.pray{background:var(--soft);border-radius:13px;padding:10px 2px;text-align:center;min-width:0}
+.pray.active{background:var(--main);color:#fff}
+.pname{font-size:10px}
+.ptime{font-size:12px;font-weight:bold;margin-top:7px;direction:ltr;white-space:nowrap}
+.section{padding:0 15px;margin:17px 0}
+.sectitle{font-size:17px;font-weight:bold;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow)}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.quick button{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 4px;color:var(--text);font-size:12px}
+.quick b{display:block;font-size:23px;margin-bottom:7px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 3px calc(8px + env(safe-area-inset-bottom));z-index:5}
+.nav{background:none;color:var(--muted);font-size:10px;min-width:48px}
+.nav span{display:block;font-size:20px;margin-bottom:3px}
+.nav.active{color:var(--main);font-weight:bold}
+.page{display:none}
+.page.active{display:block}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.field{background:var(--soft);color:var(--text);border:1px solid var(--line);padding:11px;border-radius:12px;min-width:0}
+.primary{background:var(--main);color:white;border-radius:12px;padding:11px 15px}
+.secondary{background:var(--soft);color:var(--main);border-radius:12px;padding:10px 13px}
+.ayah{font-size:22px;line-height:2.1;text-align:justify;padding:12px 3px;border-bottom:1px solid var(--line)}
+.ayah small{color:var(--main);font-size:12px;white-space:nowrap}
+.surahtitle{text-align:center;color:var(--main);font-weight:bold;padding:15px}
+.adhkar{line-height:2.1;font-size:19px}
+.counter{display:flex;align-items:center;justify-content:center;gap:15px;margin-top:15px}
+.countbtn{width:68px;height:68px;border-radius:50%;background:var(--main);color:white;font-size:24px}
+.settingrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px 0;border-bottom:1px solid var(--line)}
+.compass{height:220px;display:grid;place-items:center}
+.dial{width:180px;height:180px;border:7px solid var(--soft);border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle,var(--card),var(--soft))}
+.needle{font-size:65px;color:var(--main);display:inline-block;transition:transform .3s ease}
+.calendargrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}
+.day{background:var(--soft);padding:10px 0;border-radius:9px;font-size:12px}
+.today{background:var(--main);color:#fff}
+.notice{padding:12px;background:var(--soft);border-radius:12px;color:var(--muted);font-size:12px;line-height:1.9}
+.status{padding:10px;background:var(--soft);border-radius:11px;margin-bottom:10px;color:var(--muted);font-size:12px;line-height:1.7}
+.developer-credit{text-align:center;margin-top:16px;padding:14px 10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:2}
+.developer-credit b{color:var(--main)}
+.developer-credit a{color:var(--main);font-weight:bold;text-decoration:none;direction:ltr;display:inline-block}
+@media(max-width:360px){.prayers{gap:4px}.pray{padding:9px 1px}.pname{font-size:9px}.ptime{font-size:10px}.count{font-size:17px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="toprow">
+    <div>
+      <div class="brand">☪ مواقيت الصلاة</div>
+      <div class="sub">صلاتك نور حياتك — يعمل بدون نت</div>
+    </div>
+    <select id="city" class="cityselect" aria-label="المدينة">
+      <option value="taiz">تعز</option>
+      <option value="sanaa">صنعاء</option>
+      <option value="aden">عدن</option>
+      <option value="ibb">إب</option>
+      <option value="hodeidah">الحديدة</option>
+      <option value="dhamar">ذمار</option>
+      <option value="mukalla">المكلا</option>
+      <option value="marib">مأرب</option>
+      <option value="sayun">سيئون</option>
+    </select>
+  </div>
+  <div class="datebox">
+    <div>
+      <div class="datebig" id="greg">—</div>
+      <div class="datehint" id="hijri">—</div>
+    </div>
+    <div class="moon">🌙</div>
+  </div>
+</header>
+
+<main>
+  <section id="home" class="page active">
+    <div class="hero">
+      <div class="nextlabel">الصلاة القادمة</div>
+      <div class="nextrow">
+        <div>
+          <div class="nextname" id="nextName">—</div>
+          <div class="muted" id="nextDate">جارٍ حساب المواقيت...</div>
+        </div>
+        <div class="count" id="countdown">--:--:--</div>
+      </div>
+      <div class="prayers" id="prayers"></div>
+    </div>
+    <div class="section">
+      <h3 class="sectitle">الوصول السريع</h3>
+      <div class="quick">
+        <button onclick="showPage('quran')"><b>📖</b>القرآن الكريم</button>
+        <button onclick="showPage('adhkar')"><b>🤲</b>الأذكار</button>
+        <button onclick="showPage('qibla')"><b>🧭</b>اتجاه القبلة</button>
+      </div>
+    </div>
+    <div class="section">
+      <h3 class="sectitle">التاريخ القادم</h3>
+      <div class="card" id="tomorrow">—</div>
+    </div>
+    <div class="section">
+      <div class="notice">المواقيت تُحسب محلياً بدون نت، وصوت الأذان يعمل محلياً من ملف adhan.mp3 بجوار الصفحة أو من الملف المحفوظ في المتصفح.</div>
+    </div>
+  </section>
+
+  <section id="quran" class="page">
+    <div class="section">
+      <h3 class="sectitle">📖 القرآن الكريم</h3>
+      <div class="toolbar">
+        <select id="surahSelect" class="field" style="flex:1"><option>جارٍ تحميل السور...</option></select>
+        <select id="juzSelect" class="field"><option value="0">كل الأجزاء</option></select>
+        <button class="secondary" id="fontDown">A−</button>
+        <button class="secondary" id="fontUp">A+</button>
+      </div>
+      <div class="toolbar">
+        <input id="searchAyah" class="field" placeholder="ابحث في الآيات" style="flex:1">
+        <button class="primary" id="searchBtn">بحث</button>
+      </div>
+      <div id="quranStatus" class="muted">يتم التحقق من القرآن المحفوظ...</div>
+      <div class="card" id="quranText"><div class="surahtitle">بسم الله الرحمن الرحيم</div></div>
+    </div>
+  </section>
+
+  <section id="adhkar" class="page">
+    <div class="section">
+      <h3 class="sectitle">🤲 الأذكار</h3>
+      <div class="toolbar">
+        <button class="primary" onclick="loadAzkar('morning')">أذكار الصباح</button>
+        <button class="secondary" onclick="loadAzkar('evening')">أذكار المساء</button>
+      </div>
+      <div id="azkarCard" class="card">
+        <div class="adhkar">اختر أذكار الصباح أو المساء للبدء.</div>
+      </div>
+      <div class="counter">
+        <button class="countbtn" id="zikrCount">0</button>
+        <span class="muted">اضغط للتسبيح</span>
+        <button class="secondary" onclick="resetZikr()">تصفير</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="qibla" class="page">
+    <div class="section">
+      <h3 class="sectitle">🧭 اتجاه القبلة</h3>
+      <div class="card">
+        <div class="compass"><div class="dial"><span id="needle" class="needle">➤</span></div></div>
+        <div style="text-align:center;font-size:20px;font-weight:bold" id="qiblaDeg">—</div>
+        <p class="muted" style="text-align:center">الاتجاه محسوب من المدينة المختارة إلى الكعبة المشرفة بدون نت.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="calendar" class="page">
+    <div class="section">
+      <h3 class="sectitle">📅 التقويم</h3>
+      <div class="card">
+        <div class="toolbar" style="justify-content:space-between">
+          <button class="secondary" onclick="changeMonth(-1)">السابق</button>
+          <b id="monthTitle"></b>
+          <button class="secondary" onclick="changeMonth(1)">التالي</button>
+        </div>
+        <div class="calendargrid" id="calendarGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="settings" class="page">
+    <div class="section">
+      <h3 class="sectitle">⚙️ الإعدادات</h3>
+      <div class="card">
+        <div class="settingrow">
+          <span>مظهر التطبيق</span>
+          <select id="theme" class="field"><option value="light">فاتح</option><option value="dark">داكن</option></select>
+        </div>
+        <div class="settingrow">
+          <span>نظام الوقت</span>
+          <select id="timeFormat" class="field"><option value="12">12 ساعة</option><option value="24">24 ساعة</option></select>
+        </div>
+        <div class="settingrow">
+          <span>ملف صوت الأذان</span>
+          <button class="secondary" id="pickAdhanBtn">اختيار ملف (بدون نت)</button>
+          <input type="file" id="adhanFileInput" accept="audio/*" style="display:none">
+        </div>
+        <div class="settingrow">
+          <span>تنبيه الأذان</span>
+          <button class="secondary" id="adhanToggle">إيقاف التنبيه</button>
+        </div>
+        <div class="settingrow">
+          <span>تجربة صوت الأذان</span>
+          <button class="primary" id="testAdhan">تشغيل</button>
+        </div>
+        <div class="settingrow">
+          <span>إيقاف الصوت</span>
+          <button class="secondary" id="stopAdhan">إيقاف</button>
+        </div>
+        <div id="adhanStatus" class="status">يبحث عن ملف adhan.mp3 المحلي أو الملف المحفوظ في المتصفح...</div>
+        <div class="notice">يعمل بدون نت إذا وضعت ملف الصوت باسم adhan.mp3 في نفس مجلد التطبيق، أو اخترته بالزر أعلاه ليُحفظ محلياً في المتصفح.</div>
+        <div class="developer-credit"><b>تطوير التطبيق: بشار القحطاني</b><br>للتواصل: <a href="tel:738543674">738543674</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom">
+  <button class="nav active" data-page="home"><span>⌂</span>الرئيسية</button>
+  <button class="nav" data-page="quran"><span>📖</span>القرآن</button>
+  <button class="nav" data-page="adhkar"><span>🤲</span>الأذكار</button>
+  <button class="nav" data-page="calendar"><span>▦</span>التقويم</button>
+  <button class="nav" data-page="settings"><span>⚙</span>الإعدادات</button>
+</nav>
+
+<audio id="adhanPlayer" preload="auto"></audio>
+
+<script>
+'use strict';
+const cities={
+  taiz:{n:'تعز',lat:13.5795,lon:44.0209},
+  sanaa:{n:'صنعاء',lat:15.3694,lon:44.191},
+  aden:{n:'عدن',lat:12.7855,lon:45.0187},
+  ibb:{n:'إب',lat:13.9667,lon:44.1833},
+  hodeidah:{n:'الحديدة',lat:14.7978,lon:42.9545},
+  dhamar:{n:'ذمار',lat:14.5427,lon:44.4051},
+  mukalla:{n:'المكلا',lat:14.5425,lon:49.1242},
+  marib:{n:'مأرب',lat:15.4625,lon:45.3258},
+  sayun:{n:'سيئون',lat:15.943,lon:48.7873}
+};
+const names=['الفجر','الشروق','الظهر','العصر','المغرب','العشاء'];
+
+let times=[], nextPrayer=null, adhanEnabled=true, lastAdhanKey='';
+let quran=[], fontSize=22, monthDate=new Date(), azkarType='morning', azIndex=0, azCount=0;
+let lastDayKey = new Date().toDateString();
+let savedAudioBlobUrl = null;
+
+const $=id=>document.getElementById(id);
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+  document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  if(id==='calendar')renderCalendar();
+  if(id==='qibla')renderQibla();
+}
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+function dateTime(minutes,dayOffset=0){
+  let d=new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()+dayOffset);
+  d.setMinutes(minutes);
+  return d;
+}
+
+function formatMinutes(v){
+  let h=Math.floor(v/60)%24, m=v%60;
+  if($('timeFormat').value==='24')return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  return (h%12||12)+':'+String(m).padStart(2,'0')+' '+(h<12?'ص':'م');
+}
+
+function fmtDate(d){
+  return d.toLocaleDateString('ar-YE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+
+function stripDiacritics(str){
+  return str.replace(/[\u064B-\u065F\u0670]/g,'');
+}
+
+const deg2rad=d=>d*Math.PI/180, rad2deg=r=>r*180/Math.PI;
+function calcLocalPrayers(date, lat, lon){
+  const start=new Date(date.getFullYear(),0,0);
+  const diff=date-start+(start.getTimezoneOffset()-date.getTimezoneOffset())*60*1000;
+  const dayOfYear=Math.floor(diff/86400000);
+  const tz=-date.getTimezoneOffset()/60;
+
+  const g=(2*Math.PI/365)*(dayOfYear-1+(12-tz)/24);
+  const eqTime=229.18*(0.000075+0.001868*Math.cos(g)-0.032077*Math.sin(g)-0.014615*Math.cos(2*g)-0.040849*Math.sin(2*g));
+  const decl=0.006918-0.399912*Math.cos(g)+0.070257*Math.sin(g)-0.006758*Math.cos(2*g)+0.000907*Math.sin(2*g)-0.002697*Math.cos(3*g)+0.00148*Math.sin(3*g);
+
+  const solarNoonMin=720-4*lon-eqTime+tz*60;
+  const haAngle=(angleDeg)=>{
+    const cosH=(Math.cos(deg2rad(90+angleDeg))-Math.sin(deg2rad(lat))*Math.sin(decl))/(Math.cos(deg2rad(lat))*Math.cos(decl));
+    return rad2deg(Math.acos(Math.min(1,Math.max(-1,cosH))))*4;
+  };
+
+  const sunriseMin=solarNoonMin-haAngle(0.833);
+  const sunsetMin=solarNoonMin+haAngle(0.833);
+  const fajrMin=solarNoonMin-haAngle(18);
+  const ishaMin=solarNoonMin+haAngle(18);
+
+  const asrAlt=rad2deg(Math.atan(1/(1+Math.tan(Math.abs(deg2rad(lat)-decl)))));
+  const cosAsr=(Math.sin(deg2rad(asrAlt))-Math.sin(deg2rad(lat))*Math.sin(decl))/(Math.cos(deg2rad(lat))*Math.cos(decl));
+  const asrHa=rad2deg(Math.acos(Math.min(1,Math.max(-1,cosAsr))))*4;
+  const asrMin=solarNoonMin+asrHa;
+
+  return [fajrMin, sunriseMin, solarNoonMin, asrMin, sunsetMin, ishaMin].map(m=>Math.round(m));
+}
+
+function loadPrayerTimes(){
+  let city=cities[$('city').value], d=new Date();
+  times=calcLocalPrayers(d, city.lat, city.lon);
+  $('nextDate').textContent='مواقيت اليوم — '+city.n;
+  renderPrayer();
+}
+
+function renderPrayer(){
+  let now=new Date();
+  $('greg').textContent=fmtDate(now);
+  try{
+    $('hijri').textContent=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(now)+' هـ';
+  }catch(e){
+    $('hijri').textContent='التاريخ الهجري';
+  }
+  $('prayers').innerHTML=names.map((n,i)=>`<div class="pray" id="pray${i}"><div class="pname">${n}</div><div class="ptime">${formatMinutes(times[i])}</div></div>`).join('');
+  let upcoming=times.map((m,i)=>({d:dateTime(m),i})).filter(x=>x.d>now);
+  if(!upcoming.length)upcoming=[{d:dateTime(times[0],1),i:0}];
+  nextPrayer=upcoming[0];
+  $('nextName').textContent=names[nextPrayer.i];
+  $('nextDate').textContent='المتبقي على الصلاة القادمة';
+  let tomorrow=new Date();
+  tomorrow.setDate(tomorrow.getDate()+1);
+  $('tomorrow').innerHTML=`غداً: <b>${fmtDate(tomorrow)}</b><br><span class="muted">${new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(tomorrow)} هـ</span>`;
+  tickCountdown();
+}
+
+function tickCountdown(){
+  let now=new Date();
+  if(now.toDateString()!==lastDayKey){
+    lastDayKey=now.toDateString();
+    loadPrayerTimes();
+    return;
+  }
+  if(!nextPrayer)return;
+  let diff=Math.max(0,Math.floor((nextPrayer.d-now)/1000));
+  let h=Math.floor(diff/3600), m=Math.floor(diff%3600/60), s=diff%60;
+  $('countdown').textContent=[h,m,s].map(x=>String(x).padStart(2,'0')).join(':');
+  document.querySelectorAll('.pray').forEach(x=>x.classList.remove('active'));
+  let el=$('pray'+nextPrayer.i);
+  if(el)el.classList.add('active');
+  if(diff===0)loadPrayerTimes();
+}
+
+function openAudioDb(){
+  return new Promise((resolve, reject)=>{
+    const req=indexedDB.open('OfflineAdhanDB',1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains('audio')) db.createObjectStore('audio');
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+
+async function saveAudioBlob(file){
+  const db=await openAudioDb();
+  return new Promise((resolve, reject)=>{
+    const tx=db.transaction('audio','readwrite');
+    tx.objectStore('audio').put({ blob: file, name: file.name }, 'adhan');
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+
+async function initOfflineAdhan(){
+  const player=$('adhanPlayer');
+  try{
+    const db=await openAudioDb();
+    const record=await new Promise((resolve, reject)=>{
+      const tx=db.transaction('audio','readonly');
+      const req=tx.objectStore('audio').get('adhan');
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(req.error);
+    });
+    if(record && record.blob){
+      if(savedAudioBlobUrl) URL.revokeObjectURL(savedAudioBlobUrl);
+      savedAudioBlobUrl=URL.createObjectURL(record.blob);
+      player.src=savedAudioBlobUrl;
+      $('adhanStatus').textContent=`صوت الأذان محفوظ بدون نت: (${record.name})`;
+      return true;
+    }
+  }catch(e){}
+
+  player.src='adhan.mp3';
+  $('adhanStatus').textContent='جاهز بدون نت عبر ملف adhan.mp3 المحلي أو عبر زر اختيار ملف.';
+  return false;
+}
+
+$('pickAdhanBtn').onclick=()=>$('adhanFileInput').click();
+
+$('adhanFileInput').onchange=async(e)=>{
+  const file=e.target.files && e.target.files[0];
+  if(!file)return;
+  $('adhanStatus').textContent='جارٍ حفظ ملف الأذان بدون نت...';
+  try{
+    await saveAudioBlob(file);
+    await initOfflineAdhan();
+    $('adhanStatus').textContent=`تم حفظ (${file.name}) ويعمل الآن بدون نت.`;
+  }catch(err){
+    if(savedAudioBlobUrl) URL.revokeObjectURL(savedAudioBlobUrl);
+    savedAudioBlobUrl=URL.createObjectURL(file);
+    $('adhanPlayer').src=savedAudioBlobUrl;
+    $('adhanStatus').textContent=`تم تحميل (${file.name}) للجلسة الحالية.`;
+  }
+};
+
+async function playAdhan(prayerLabel=''){
+  const player=$('adhanPlayer');
+  if(!player.src) await initOfflineAdhan();
+  player.pause();
+  try{player.currentTime=0;}catch(e){}
+  $('adhanStatus').textContent=(prayerLabel?'حان الآن موعد '+prayerLabel+' — ':'يتم تشغيل ')+'صوت الأذان (بدون نت)...';
+  const p=player.play();
+  if(p && p.then){
+    p.then(()=>$('adhanStatus').textContent='يعمل صوت الأذان الآن (بدون نت).')
+     .catch(()=>$('adhanStatus').textContent='تعذر تشغيل الصوت. ضع ملف adhan.mp3 بجوار الصفحة أو اختره من الجهاز.');
+  }
+}
+
+function checkAdhan(){
+  if(!times.length || !adhanEnabled)return;
+  let now=new Date(), minute=now.getHours()*60+now.getMinutes();
+  times.forEach((m,i)=>{
+    if(i===1)return;
+    let key=now.toDateString()+'-'+i;
+    if(m===minute && lastAdhanKey!==key){
+      lastAdhanKey=key;
+      playAdhan(names[i]);
+    }
+  });
+}
+
+function bearing(lat,lon){
+  let p1=lat*Math.PI/180, p2=21.4225*Math.PI/180, dl=(39.8262-lon)*Math.PI/180;
+  return (Math.atan2(Math.sin(dl),Math.cos(p1)*Math.tan(p2)-Math.sin(p1)*Math.cos(dl))*180/Math.PI+360)%360;
+}
+
+function renderQibla(){
+  let c=cities[$('city').value], b=bearing(c.lat,c.lon);
+  $('needle').style.transform=`rotate(${b}deg)`;
+  $('qiblaDeg').textContent='اتجاه القبلة '+Math.round(b)+'° من الشمال';
+}
+
+function loadQuran(){
+  try{
+    let cached=localStorage.getItem('quranUthmaniV1');
+    if(!cached){
+      $('quranStatus').textContent='القرآن غير محفوظ بعد على الجهاز (يتطلب حفظاً مرة واحدة عند توفر نت).';
+      $('quranText').innerHTML='<div class="notice">بقية التطبيق تعمل بدون نت الآن؛ وعند توفر الإنترنت يتم حفظ المصحف تلقائياً للعمل بدون نت.</div>';
+      return;
+    }
+    quran=JSON.parse(cached);
+    $('quranStatus').textContent='القرآن محفوظ وجاهز بدون نت.';
+    $('surahSelect').innerHTML=quran.map(s=>`<option value="${s.number}">${s.number}. ${s.name}</option>`).join('');
+    $('juzSelect').innerHTML='<option value="0">كل الأجزاء</option>'+Array.from({length:30},(_,i)=>`<option value="${i+1}">الجزء ${i+1}</option>`).join('');
+    renderSurah(1);
+  }catch(e){
+    $('quranStatus').textContent='تعذر قراءة القرآن المحفوظ.';
+  }
+}
+
+function renderSurah(n){
+  if(!quran.length)return;
+  let s=quran.find(x=>x.number===Number(n));
+  if(!s)return;
+  let verses=s.ayahs;
+  if(Number($('juzSelect').value))verses=verses.filter(a=>a.juz===Number($('juzSelect').value));
+  $('quranText').innerHTML=`<div class="surahtitle">${s.name}</div>`+verses.map(a=>`<div class="ayah" style="font-size:${fontSize}px">${a.text} <small>﴿${a.numberInSurah}﴾</small></div>`).join('');
+}
+
+$('surahSelect').onchange=()=>renderSurah($('surahSelect').value);
+$('juzSelect').onchange=()=>renderSurah($('juzSelect').value);
+$('fontUp').onclick=()=>{fontSize=Math.min(36,fontSize+2);renderSurah($('surahSelect').value)};
+$('fontDown').onclick=()=>{fontSize=Math.max(16,fontSize-2);renderSurah($('surahSelect').value)};
+$('searchBtn').onclick=()=>{
+  let q=$('searchAyah').value.trim();
+  if(!q||!quran.length)return;
+  let cleanQ=stripDiacritics(q);
+  let hits=[];
+  quran.forEach(s=>s.ayahs.forEach(a=>{
+    if(a.text.includes(q) || stripDiacritics(a.text).includes(cleanQ))hits.push({s,a});
+  }));
+  $('quranText').innerHTML=hits.length
+    ? hits.slice(0,100).map(x=>`<div class="ayah" style="font-size:${fontSize}px"><small>${x.s.name} — ${x.a.numberInSurah}</small><br>${x.a.text}</div>`).join('')
+    : '<div class="notice">لا توجد نتائج مطابقة.</div>';
+};
+
+const azkar={
+  morning:[
+    ['أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير.',1],
+    ['اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور.',1],
+    ['رضيت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً.',3],
+    ['سبحان الله وبحمده.',100],
+    ['أستغفر الله وأتوب إليه.',100],
+    ['اللهم صل وسلم على نبينا محمد.',10]
+  ],
+  evening:[
+    ['أمسينا وأمسى الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير.',1],
+    ['اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير.',1],
+    ['رضيت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً.',3],
+    ['سبحان الله وبحمده.',100],
+    ['أستغفر الله وأتوب إليه.',100],
+    ['اللهم صل وسلم على نبينا محمد.',10]
+  ]
+};
+
+function loadAzkar(type){azkarType=type;azIndex=0;azCount=0;renderZikr()}
+function renderZikr(){
+  let arr=azkar[azkarType], item=arr[azIndex];
+  $('azkarCard').innerHTML=`<div class="muted">${azkarType==='morning'?'أذكار الصباح':'أذكار المساء'} — الذكر ${azIndex+1} من ${arr.length}</div><div class="adhkar" style="margin-top:12px">${item[0]}</div><div class="muted" style="margin-top:12px">عدد التكرار الوارد: ${item[1]}</div><div class="toolbar" style="margin-top:14px"><button class="primary" onclick="nextZikr()">الذكر التالي</button><button class="secondary" onclick="loadAzkar(azkarType)">إعادة</button></div>`;
+  $('zikrCount').textContent=azCount;
+}
+function nextZikr(){azIndex=(azIndex+1)%azkar[azkarType].length;azCount=0;renderZikr()}
+$('zikrCount').onclick=()=>{azCount++;$('zikrCount').textContent=azCount};
+function resetZikr(){azCount=0;$('zikrCount').textContent=0}
+
+function renderCalendar(){
+  let y=monthDate.getFullYear(), m=monthDate.getMonth(), first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+  $('monthTitle').textContent=monthDate.toLocaleDateString('ar-YE',{month:'long',year:'numeric'});
+  let labels=['ح','ن','ث','ر','خ','ج','س'];
+  $('calendarGrid').innerHTML=labels.map(x=>`<div class="muted">${x}</div>`).join('')
+    + Array(first).fill('<div></div>').join('')
+    + Array.from({length:days},(_,i)=>{
+        let d=i+1, is=new Date().toDateString()===new Date(y,m,d).toDateString();
+        return `<div class="day ${is?'today':''}">${d}<br><small>${new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric'}).format(new Date(y,m,d))}</small></div>`;
+      }).join('');
+}
+function changeMonth(v){monthDate.setMonth(monthDate.getMonth()+v);renderCalendar()}
+
+$('testAdhan').onclick=()=>playAdhan();
+$('stopAdhan').onclick=()=>{
+  const player=$('adhanPlayer');
+  player.pause();
+  try{player.currentTime=0;}catch(e){}
+  $('adhanStatus').textContent='تم إيقاف صوت الأذان.';
+};
+
+let savedAdhanState=localStorage.getItem('offlineAdhanEnabled');
+if(savedAdhanState==='0')adhanEnabled=false;
+$('adhanToggle').textContent=adhanEnabled?'إيقاف التنبيه':'تفعيل التنبيه';
+
+$('adhanToggle').onclick=()=>{
+  adhanEnabled=!adhanEnabled;
+  localStorage.setItem('offlineAdhanEnabled',adhanEnabled?'1':'0');
+  $('adhanToggle').textContent=adhanEnabled?'إيقاف التنبيه':'تفعيل التنبيه';
+  $('adhanStatus').textContent=adhanEnabled?'تنبيه الأذان بدون نت مفعّل.':'تم إيقاف تنبيه الأذان.';
+};
+
+$('city').onchange=()=>{localStorage.setItem('prayerCity',$('city').value);loadPrayerTimes();renderQibla()};
+$('timeFormat').onchange=()=>{if(times.length)renderPrayer()};
+$('theme').onchange=()=>{document.body.classList.toggle('dark',$('theme').value==='dark');localStorage.setItem('prayerTheme',$('theme').value)};
+
+let savedTheme=localStorage.getItem('prayerTheme');
+if(savedTheme){$('theme').value=savedTheme;document.body.classList.toggle('dark',savedTheme==='dark')}
+let savedCity=localStorage.getItem('prayerCity');
+if(savedCity&&cities[savedCity])$('city').value=savedCity;
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+
+initOfflineAdhan();
+loadPrayerTimes();
+renderQibla();
+loadQuran();
+setInterval(()=>{tickCountdown();checkAdhan()},1000);
+</script>
+</body>
+</html>
